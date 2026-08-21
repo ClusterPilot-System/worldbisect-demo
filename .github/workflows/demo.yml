@@ -16,7 +16,7 @@ jobs:
 
       - name: Run WorldBisect
         id: worldbisect
-        uses: ClusterPilot-System/worldbisect@v1.1.0
+        uses: ClusterPilot-System/worldbisect@v1.1.1
         with:
           command: ./check.sh
           good-workspace: demo/good

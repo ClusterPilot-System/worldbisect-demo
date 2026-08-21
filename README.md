@@ -16,8 +16,9 @@ verify the causal factor as `PROVEN`.
 The workflow is manual by design. It does not run arbitrary pull-request code,
 and it does not require secrets.
 
-The workflow pins the Action to the immutable `v1.1.0` release and pins the
-downloaded Linux AMD64 archive with its built-in verified SHA-256 digest:
+The workflow pins the Action metadata to the immutable `v1.1.1` release. It
+uses the published v1.1.0 Linux AMD64 archive with its built-in verified
+SHA-256 digest, so this copy-paste example does not need a `sha256` input:
 `74602fb5a1894eaf63ef12178fa5d9ff53b6369a9277f17021c3733f18f7d757`.
 
 Expected summary:
