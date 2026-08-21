@@ -1,0 +1,47 @@
+name: WorldBisect demo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout demo fixture
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Run WorldBisect
+        id: worldbisect
+        uses: ClusterPilot-System/worldbisect@v1.1.0
+        with:
+          command: ./check.sh
+          good-workspace: demo/good
+          bad-workspace: demo/bad
+          version: 1.1.0
+          repetitions: 3
+          max-experiments: 16
+          fail-on: never
+
+      - name: Assert the demonstrated proof
+        env:
+          WORLDBISECT_STATUS: ${{ steps.worldbisect.outputs.status }}
+        run: test "$WORLDBISECT_STATUS" = PROVEN
+
+      - name: Publish demo summary
+        env:
+          WORLDBISECT_STATUS: ${{ steps.worldbisect.outputs.status }}
+          WORLDBISECT_ANALYSIS_ID: ${{ steps.worldbisect.outputs.analysis-id }}
+        run: |
+          {
+            echo '## WorldBisect demo result'
+            echo
+            echo "status: \`$WORLDBISECT_STATUS\`"
+            echo 'factor: workspace file "config.txt"'
+            echo "analysis: \`$WORLDBISECT_ANALYSIS_ID\`"
+            echo
+            echo 'The good and bad workspaces differed only in config.txt.'
+          } >> "$GITHUB_STEP_SUMMARY"
