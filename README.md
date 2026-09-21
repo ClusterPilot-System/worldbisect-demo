@@ -13,6 +13,10 @@ without installing anything. Open a completed run to read the workflow summary;
 GitHub sign-in is required to download its diagnostic artifact. This is a
 deliberately introduced regression, not a customer incident.
 
+[Verified run with engine 1.2.1 (September 21, 2026)](https://github.com/ClusterPilot-System/worldbisect-demo/actions/runs/35605327590):
+`PROVEN`, `config.txt`, nine experiments, with forward, reverse and minimality
+checks confirmed. This run used the exact workflow revision proposed in PR #2.
+
 To execute the demo yourself:
 
 1. Fork this repository into your GitHub account, then open **Actions** in your
@@ -47,6 +51,8 @@ not claim universal causal completeness outside that model. The workflow checks
 both the real `PROVEN` status and the `config.txt` finding before writing its
 short summary. A green run means the controlled demonstration passed; it does
 not mean the deliberately bad configuration passed its original check.
+The imported JUnit report therefore shows one failed diagnostic test for the
+intentionally broken input; the demo's own assertions and workflow pass.
 
 This demo uses **`mode: compare`**, with two small workspaces already in the
 repository. To save successful inputs automatically and investigate a later CI
