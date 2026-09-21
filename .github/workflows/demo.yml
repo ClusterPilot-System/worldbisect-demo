@@ -5,6 +5,8 @@ on:
 
 permissions:
   contents: read
+  checks: write
+  security-events: write
 
 jobs:
   diagnose:
@@ -13,15 +15,18 @@ jobs:
     steps:
       - name: Checkout demo fixture
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Run WorldBisect
         id: worldbisect
-        uses: ClusterPilot-System/worldbisect@v1.1.1
+        uses: ClusterPilot-System/worldbisect@db6b33f891779cf8e636393cf0b6afb242f6a282 # action-v1.0.1
         with:
+          mode: compare
           command: ./check.sh
           good-workspace: demo/good
           bad-workspace: demo/bad
-          version: 1.1.0
+          version: 1.2.1
           repetitions: 3
           max-experiments: 16
           fail-on: never
@@ -29,7 +34,10 @@ jobs:
       - name: Assert the demonstrated proof
         env:
           WORLDBISECT_STATUS: ${{ steps.worldbisect.outputs.status }}
-        run: test "$WORLDBISECT_STATUS" = PROVEN
+          WORLDBISECT_REPORT: ${{ steps.worldbisect.outputs.report-path }}
+        run: |
+          test "$WORLDBISECT_STATUS" = PROVEN
+          grep -Fq 'workspace file "config.txt"' "$WORLDBISECT_REPORT"
 
       - name: Publish demo summary
         env:
@@ -44,4 +52,6 @@ jobs:
             echo "analysis: \`$WORLDBISECT_ANALYSIS_ID\`"
             echo
             echo 'The good and bad workspaces differed only in config.txt.'
+            echo 'The assertion checked both PROVEN and the config.txt finding in the real report.'
+            echo 'This explicit-workspace fixture does not test automatic baseline capture.'
           } >> "$GITHUB_STEP_SUMMARY"
