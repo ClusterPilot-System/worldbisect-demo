@@ -6,20 +6,38 @@ The good and bad workspaces differ only in `config.txt`. The check command
 passes in the good workspace and fails in the bad workspace, so WorldBisect can
 verify the causal factor as `PROVEN`.
 
-## Run the demo
+## Try it in your browser
 
-1. Open the **Actions** tab.
+You can inspect the public [WorldBisect demo runs](https://github.com/ClusterPilot-System/worldbisect-demo/actions/workflows/demo.yml)
+without installing anything. Open a completed run to read the workflow summary;
+GitHub sign-in is required to download its diagnostic artifact. This is a
+deliberately introduced regression, not a customer incident.
+
+[Verified run with engine 1.2.1 (September 21, 2026)](https://github.com/ClusterPilot-System/worldbisect-demo/actions/runs/35605327590):
+`PROVEN`, `config.txt`, nine experiments, with forward, reverse and minimality
+checks confirmed. This run used the exact workflow revision proposed in PR #2.
+
+To execute the demo yourself:
+
+1. Fork this repository into your GitHub account, then open **Actions** in your
+   fork and enable workflows if GitHub asks.
 2. Select **WorldBisect demo**.
 3. Click **Run workflow**.
 4. Open the run summary and the `worldbisect-diagnostic` artifact.
 
-The workflow is manual by design. It does not run arbitrary pull-request code,
-and it does not require secrets.
+**Run workflow** is available to people with write access to their repository;
+visitors cannot start a run in this upstream repository. The workflow is manual
+by design and runs only the checked-in fixture. It does not require you to add
+secrets. GitHub supplies the workflow token; its `checks: write` and
+`security-events: write` permissions publish the diagnostic test check and SARIF
+report, alongside `contents: read` for checkout.
 
-The workflow pins the Action metadata to the immutable `v1.1.1` release. It
-uses the published v1.1.0 Linux AMD64 archive with its built-in verified
-SHA-256 digest, so this copy-paste example does not need a `sha256` input:
-`74602fb5a1894eaf63ef12178fa5d9ff53b6369a9277f17021c3733f18f7d757`.
+The workflow pins [Action `action-v1.0.1`](https://github.com/ClusterPilot-System/worldbisect/releases/tag/action-v1.0.1)
+to immutable revision `db6b33f891779cf8e636393cf0b6afb242f6a282` and explicitly
+selects engine [1.2.1](https://github.com/ClusterPilot-System/worldbisect/releases/tag/v1.2.1).
+The Action verifies the published Linux AMD64 archive before execution using
+its built-in SHA-256 digest, so no additional `sha256` input is needed:
+`603884407d628900cb20dd33b64610af221bd029e3b08b5b2ff0d41f7bae4467`.
 
 Expected summary:
 
@@ -29,7 +47,22 @@ factor: workspace file "config.txt"
 ```
 
 The result is a proof within the captured workspace and command model. It does
-not claim universal causal completeness outside that model.
+not claim universal causal completeness outside that model. The workflow checks
+both the real `PROVEN` status and the `config.txt` finding before writing its
+short summary. A green run means the controlled demonstration passed; it does
+not mean the deliberately bad configuration passed its original check.
+The imported JUnit report therefore shows one failed diagnostic test for the
+intentionally broken input; the demo's own assertions and workflow pass.
+
+This demo uses **`mode: compare`**, with two small workspaces already in the
+repository. To save successful inputs automatically and investigate a later CI
+failure, use [the separate `mode: ci` setup](https://github.com/ClusterPilot-System/worldbisect/blob/main/docs/ci-baselines.md).
+Both modes have explicit reproducibility and input-selection limits.
+
+Prefer running locally without a GitHub account? Try the
+[three-command Linux/WSL demo](https://github.com/ClusterPilot-System/worldbisect/blob/main/docs/first-diagnosis.md).
+If setup stops or the result is unclear, tell us which check you wanted to try
+in the [getting-started form](https://github.com/ClusterPilot-System/worldbisect/issues/new?template=getting-started.yml).
 
 ## Record a real demo
 
